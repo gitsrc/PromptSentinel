@@ -1,5 +1,5 @@
 # PromptSentinel 服务镜像。确定性规则零 ML 依赖,镜像小、启动快、可离线。
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
