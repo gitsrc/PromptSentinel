@@ -1,0 +1,164 @@
+# PromptSentinel Security — 安全扫描流水线(SCAN-ONLY)。
+#
+# 铁律(安全产品):本流水线**只扫描、只报告,绝不存储/分发任何资产**。
+#   - CodeQL / trivy / gitleaks 全部 fs/源码模式:不拉镜像、不推 registry、不 upload-artifact、不建 release。
+#   - dependency-review 仅在 PR 上运行(它需要 base..head 的依赖差异)。
+#   - 结果写入 GitHub Code Scanning(SARIF 上传到平台告警面板,非可下载构建产物),
+#     以及 job 日志。这属于"安全报告",不是"资产分发"。
+#
+# 作为安全产品,我们对自己的供应链同样上安检门:代码漏洞、依赖 CVE、泄露的密钥,一个都不放过。
+
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # 每周一 05:17 UTC 跑一次:抓"代码没变但新披露的 CVE"。
+    - cron: "17 5 * * 1"
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── CodeQL:语义级代码漏洞分析(注入/越权/不安全反序列化等)─────────────
+  codeql:
+    name: CodeQL · ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write   # 仅为写 Code Scanning 告警(SARIF),非资产上传
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: python
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+          - language: go
+            build-mode: autobuild
+          - language: java-kotlin
+            build-mode: manual
+    steps:
+      - uses: actions/checkout@v4
+
+      # Java 需要可构建环境(manual 模式下我们自己编译 SDK 供 CodeQL 抽取)。
+      - name: Set up Java (java-kotlin only)
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Set up Go (go only)
+        if: matrix.language == 'go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+          cache-dependency-path: sdks/go/go.mod
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-extended
+
+      # manual build-mode:只为 CodeQL 抽取字节码而编译,跳过测试、不打包发布。
+      - name: Manual build (java-kotlin)
+        if: matrix.language == 'java-kotlin'
+        working-directory: sdks/java
+        run: mvn -B -ntp -DskipTests compile
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  # ── 依赖审查:PR 引入的新依赖里有无已知 CVE / 不兼容许可证 ───────────────
+  dependency-review:
+    name: Dependency Review (PR only)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write   # 仅为在 PR 上留审查摘要评论
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
+          # 安全产品对许可证敏感:禁止强 copyleft 混入(按需调整)。
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0
+
+  # ── gitleaks:全仓密钥/凭证泄露扫描(API key、token、私钥)──────────────
+  gitleaks:
+    name: Gitleaks · secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 全历史扫描:抓被后续提交"删掉"但仍在历史里的密钥
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 只扫描报告;不上传任何 SARIF/资产,泄露即 job 失败(非零退出)。
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
+          GITLEAKS_ENABLE_SUMMARY: "true"
+
+  # ── Trivy fs:文件系统模式扫依赖 CVE + IaC/配置错误(不拉/推任何镜像)──────
+  trivy-fs:
+    name: Trivy · filesystem scan (vuln + secret + misconfig)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write   # 仅为写 Code Scanning 告警(SARIF)
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1) 表格输出到日志:人读、CRITICAL/HIGH 即失败(给 PR 作者直接反馈)。
+      - name: Trivy fs (table, fail on HIGH+)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+          format: table
+
+      # 2) 生成 SARIF 写入 Code Scanning(平台告警面板,非可下载构建产物)。
+      #    此步即便上一步失败也运行,确保告警入库。
+      - name: Trivy fs (SARIF for code scanning)
+        if: always()
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          severity: CRITICAL,HIGH
+          exit-code: "0"
+          ignore-unfixed: true
+          format: sarif
+          output: trivy-results.sarif
+
+      - name: Upload Trivy SARIF to code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+          category: trivy-fs

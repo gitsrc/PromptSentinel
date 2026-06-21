@@ -1,0 +1,138 @@
+{"text": "统计 告警 的数量", "label": 0, "split": "all"}
+{"text": "本月 42 的库存还有多少", "label": 0, "split": "all"}
+{"text": "how do I configure 告警", "label": 0, "split": "all"}
+{"text": "A01区 的销售数据怎么样", "label": 0, "split": "all"}
+{"text": "summarize the 42 document", "label": 0, "split": "all"}
+{"text": "如何配置 传感器 的告警阈值", "label": 0, "split": "all"}
+{"text": "what does 告警 mean", "label": 0, "split": "all"}
+{"text": "what does A01区 mean", "label": 0, "split": "all"}
+{"text": "本月 inventory 的库存还有多少", "label": 0, "split": "all"}
+{"text": "schedule a 网络 maintenance", "label": 0, "split": "all"}
+{"text": "show me the 网络 report", "label": 0, "split": "all"}
+{"text": "帮我查设备 传感器 的在线状态", "label": 0, "split": "all"}
+{"text": "how do I configure A01区", "label": 0, "split": "all"}
+{"text": "帮我查设备 网络 的在线状态", "label": 0, "split": "all"}
+{"text": "schedule a 传感器 maintenance", "label": 0, "split": "all"}
+{"text": "统计 传感器 的数量", "label": 0, "split": "all"}
+{"text": "schedule a 订单12 maintenance", "label": 0, "split": "all"}
+{"text": "A01区 流程怎么走", "label": 0, "split": "all"}
+{"text": "给我 sales 的操作手册", "label": 0, "split": "all"}
+{"text": "订单12 的销售数据怎么样", "label": 0, "split": "all"}
+{"text": "42 的销售数据怎么样", "label": 0, "split": "all"}
+{"text": "给我 告警 的操作手册", "label": 0, "split": "all"}
+{"text": "创建 A01区 的巡检工单", "label": 0, "split": "all"}
+{"text": "解释一下 网络 是什么", "label": 0, "split": "all"}
+{"text": "what does 订单12 mean", "label": 0, "split": "all"}
+{"text": "帮我查设备 inventory 的在线状态", "label": 0, "split": "all"}
+{"text": "list all 订单12 in the system", "label": 0, "split": "all"}
+{"text": "本月 A01区 的库存还有多少", "label": 0, "split": "all"}
+{"text": "帮我查设备 订单12 的在线状态", "label": 0, "split": "all"}
+{"text": "预约 A01区 维修", "label": 0, "split": "all"}
+{"text": "创建 传感器 的巡检工单", "label": 0, "split": "all"}
+{"text": "list all A01区 in the system", "label": 0, "split": "all"}
+{"text": "帮我查设备 sales 的在线状态", "label": 0, "split": "all"}
+{"text": "本月 告警 的库存还有多少", "label": 0, "split": "all"}
+{"text": "帮我查设备 A01区 的在线状态", "label": 0, "split": "all"}
+{"text": "show me the 订单12 report", "label": 0, "split": "all"}
+{"text": "list all 传感器 in the system", "label": 0, "split": "all"}
+{"text": "对比 订单12 和上月差异", "label": 0, "split": "all"}
+{"text": "预约 传感器 维修", "label": 0, "split": "all"}
+{"text": "告警 流程怎么走", "label": 0, "split": "all"}
+{"text": "本月 网络 的库存还有多少", "label": 0, "split": "all"}
+{"text": "对比 传感器 和上月差异", "label": 0, "split": "all"}
+{"text": "传感器 的销售数据怎么样", "label": 0, "split": "all"}
+{"text": "给我 网络 的操作手册", "label": 0, "split": "all"}
+{"text": "show me the 告警 report", "label": 0, "split": "all"}
+{"text": "订单12 流程怎么走", "label": 0, "split": "all"}
+{"text": "查询最近 inventory 天的异常", "label": 0, "split": "all"}
+{"text": "给我 订单12 的操作手册", "label": 0, "split": "all"}
+{"text": "传感器 流程怎么走", "label": 0, "split": "all"}
+{"text": "给我 A01区 的操作手册", "label": 0, "split": "all"}
+{"text": "统计 sales 的数量", "label": 0, "split": "all"}
+{"text": "inventory 流程怎么走", "label": 0, "split": "all"}
+{"text": "解释一下 告警 是什么", "label": 0, "split": "all"}
+{"text": "创建 42 的巡检工单", "label": 0, "split": "all"}
+{"text": "what is the status of device 告警", "label": 0, "split": "all"}
+{"text": "查询最近 订单12 天的异常", "label": 0, "split": "all"}
+{"text": "what is the status of device A01区", "label": 0, "split": "all"}
+{"text": "给我 inventory 的操作手册", "label": 0, "split": "all"}
+{"text": "how do I configure 42", "label": 0, "split": "all"}
+{"text": "本月 传感器 的库存还有多少", "label": 0, "split": "all"}
+{"text": "预约 inventory 维修", "label": 0, "split": "all"}
+{"text": "网络 流程怎么走", "label": 0, "split": "all"}
+{"text": "查询最近 告警 天的异常", "label": 0, "split": "all"}
+{"text": "show me the A01区 report", "label": 0, "split": "all"}
+{"text": "告警 的销售数据怎么样", "label": 0, "split": "all"}
+{"text": "预约 告警 维修", "label": 0, "split": "all"}
+{"text": "show me the 42 report", "label": 0, "split": "all"}
+{"text": "如何配置 告警 的告警阈值", "label": 0, "split": "all"}
+{"text": "how do I configure 网络", "label": 0, "split": "all"}
+{"text": "解释一下 传感器 是什么", "label": 0, "split": "all"}
+{"text": "预约 42 维修", "label": 0, "split": "all"}
+{"text": "schedule a 42 maintenance", "label": 0, "split": "all"}
+{"text": "what is the status of device 42", "label": 0, "split": "all"}
+{"text": "解释一下 inventory 是什么", "label": 0, "split": "all"}
+{"text": "给我 42 的操作手册", "label": 0, "split": "all"}
+{"text": "解释一下 sales 是什么", "label": 0, "split": "all"}
+{"text": "inventory 的销售数据怎么样", "label": 0, "split": "all"}
+{"text": "对比 42 和上月差异", "label": 0, "split": "all"}
+{"text": "what does 42 mean", "label": 0, "split": "all"}
+{"text": "查询最近 42 天的异常", "label": 0, "split": "all"}
+{"text": "创建 告警 的巡检工单", "label": 0, "split": "all"}
+{"text": "对比 A01区 和上月差异", "label": 0, "split": "all"}
+{"text": "预约 网络 维修", "label": 0, "split": "all"}
+{"text": "如何配置 网络 的告警阈值", "label": 0, "split": "all"}
+{"text": "42 流程怎么走", "label": 0, "split": "all"}
+{"text": "对比 网络 和上月差异", "label": 0, "split": "all"}
+{"text": "summarize the 订单12 document", "label": 0, "split": "all"}
+{"text": "查询最近 网络 天的异常", "label": 0, "split": "all"}
+{"text": "解释一下 订单12 是什么", "label": 0, "split": "all"}
+{"text": "what does 网络 mean", "label": 0, "split": "all"}
+{"text": "how do I configure 订单12", "label": 0, "split": "all"}
+{"text": "预约 sales 维修", "label": 0, "split": "all"}
+{"text": "对比 sales 和上月差异", "label": 0, "split": "all"}
+{"text": "summarize the 传感器 document", "label": 0, "split": "all"}
+{"text": "对比 inventory 和上月差异", "label": 0, "split": "all"}
+{"text": "list all 42 in the system", "label": 0, "split": "all"}
+{"text": "创建 订单12 的巡检工单", "label": 0, "split": "all"}
+{"text": "summarize the A01区 document", "label": 0, "split": "all"}
+{"text": "如何配置 订单12 的告警阈值", "label": 0, "split": "all"}
+{"text": "what is the status of device 订单12", "label": 0, "split": "all"}
+{"text": "show me the 传感器 report", "label": 0, "split": "all"}
+{"text": "网络 的销售数据怎么样", "label": 0, "split": "all"}
+{"text": "sales 的销售数据怎么样", "label": 0, "split": "all"}
+{"text": "创建 sales 的巡检工单", "label": 0, "split": "all"}
+{"text": "统计 inventory 的数量", "label": 0, "split": "all"}
+{"text": "list all 网络 in the system", "label": 0, "split": "all"}
+{"text": "统计 42 的数量", "label": 0, "split": "all"}
+{"text": "schedule a 告警 maintenance", "label": 0, "split": "all"}
+{"text": "查询最近 A01区 天的异常", "label": 0, "split": "all"}
+{"text": "list all 告警 in the system", "label": 0, "split": "all"}
+{"text": "解释一下 42 是什么", "label": 0, "split": "all"}
+{"text": "如何配置 sales 的告警阈值", "label": 0, "split": "all"}
+{"text": "帮我查设备 42 的在线状态", "label": 0, "split": "all"}
+{"text": "how do I configure 传感器", "label": 0, "split": "all"}
+{"text": "帮我查设备 告警 的在线状态", "label": 0, "split": "all"}
+{"text": "what does 传感器 mean", "label": 0, "split": "all"}
+{"text": "给我 传感器 的操作手册", "label": 0, "split": "all"}
+{"text": "what is the status of device 网络", "label": 0, "split": "all"}
+{"text": "解释一下 A01区 是什么", "label": 0, "split": "all"}
+{"text": "统计 网络 的数量", "label": 0, "split": "all"}
+{"text": "如何配置 inventory 的告警阈值", "label": 0, "split": "all"}
+{"text": "统计 订单12 的数量", "label": 0, "split": "all"}
+{"text": "summarize the 告警 document", "label": 0, "split": "all"}
+{"text": "summarize the 网络 document", "label": 0, "split": "all"}
+{"text": "schedule a A01区 maintenance", "label": 0, "split": "all"}
+{"text": "查询最近 传感器 天的异常", "label": 0, "split": "all"}
+{"text": "预约 订单12 维修", "label": 0, "split": "all"}
+{"text": "what is the status of device 传感器", "label": 0, "split": "all"}
+{"text": "如何配置 A01区 的告警阈值", "label": 0, "split": "all"}
+{"text": "本月 订单12 的库存还有多少", "label": 0, "split": "all"}
+{"text": "查询最近 sales 天的异常", "label": 0, "split": "all"}
+{"text": "统计 A01区 的数量", "label": 0, "split": "all"}
+{"text": "sales 流程怎么走", "label": 0, "split": "all"}
+{"text": "如何配置 42 的告警阈值", "label": 0, "split": "all"}
+{"text": "对比 告警 和上月差异", "label": 0, "split": "all"}
+{"text": "创建 网络 的巡检工单", "label": 0, "split": "all"}
+{"text": "创建 inventory 的巡检工单", "label": 0, "split": "all"}
+{"text": "本月 sales 的库存还有多少", "label": 0, "split": "all"}

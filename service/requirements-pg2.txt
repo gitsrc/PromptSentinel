@@ -1,0 +1,5 @@
+# PG2(Llama Prompt Guard 2 ONNX)高保障档依赖 —— 单一事实源。
+# 镜像 WITH_ML=true 装这个;本地装 requirements-ml.txt(它 -r 引用本文件,避免版本漂移)。
+onnxruntime>=1.16,<2.0
+transformers>=4.40,<5.0
+huggingface_hub>=0.20,<1.0

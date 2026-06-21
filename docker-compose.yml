@@ -1,0 +1,70 @@
+# PromptSentinel 全栈部署:一条命令起前后端 —— Guard 安检门(后端) + Web 控制台(前端门户,开箱即用)。
+# 用法:  docker compose up -d --build
+#   控制台: http://127.0.0.1:18080   (7 页:概览/原理/demo/playground/benchmark/监控/接入指南;仅监听本机回环)
+#   Guard: 仅容器内网可达(http://promptsentinel:8000),不在宿主机开放端口。
+# 远程访问门户请用 SSH 转发:ssh -L 18080:127.0.0.1:18080 <host>
+
+services:
+  promptsentinel:
+    build:
+      context: ./service
+      args:
+        WITH_ML: "true"          # demo 平台:预装 PG2 ML(展示行业基准安全能力)
+        # WITH_LLM_GUARD: "true" # 可选 NER 档:输出 PII 覆盖姓名/地址(~80%),镜像 +1~2GB。
+        #   构建本档后,在 guard 配置设 use_llm_guard:true 生效;默认关=高精度正则档(53.5%/零依赖/亚毫秒)。
+    image: promptsentinel:1.0.0-ml
+    container_name: promptsentinel
+    # 不在宿主机暴露端口:门户经 Docker 内网访问 Guard。
+    # 如需本机直连调试 Guard,可临时加: ports: ["127.0.0.1:18000:8000"]
+    expose:
+      - "8000"
+    # 资源限制(生产级):PG2 ML 常驻 ~1.5G,限 2G 防 OOM 拖垮宿主;CPU 限 2 核。
+    mem_limit: 2g
+    cpus: 2.0
+    pids_limit: 256
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+    volumes:
+      # demo 专用配置(开启 ML);真实接入改回 ./service/sentinel.config.yaml(零成本档)。
+      - ./portal/guard.demo.yaml:/app/sentinel.config.yaml:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if 'ok' in urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=2).read().decode() else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 40s          # ML 首次加载(onnxruntime + tokenizer)需要预热时间
+
+  portal:
+    build: ./portal
+    image: promptsentinel-portal:1.0.0
+    container_name: promptsentinel-portal
+    environment:
+      GUARD_URL: http://promptsentinel:8000
+    mem_limit: 512m
+    cpus: 1.0
+    pids_limit: 256
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+    volumes:
+      - bench_data:/app/data     # benchmark 历史持久化(named volume,继承镜像内 portal 权限,重启/重建不丢)
+    # 仅监听本机回环 127.0.0.1:18080,不绑 0.0.0.0、不对外网暴露。
+    ports:
+      - "127.0.0.1:18080:8080"
+    depends_on:
+      promptsentinel:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  bench_data:

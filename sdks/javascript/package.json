@@ -1,0 +1,45 @@
+{
+  "name": "promptsentinel",
+  "version": "1.0.0",
+  "description": "Official JavaScript/TypeScript client SDK for PromptSentinel, the self-hosted LLM prompt-security gateway.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "files": [
+    "src/index.js",
+    "src/index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "promptsentinel",
+    "llm",
+    "prompt-injection",
+    "security",
+    "guardrails",
+    "ai-safety"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitsrc/PromptSentinel.git",
+    "directory": "sdks/javascript"
+  },
+  "homepage": "https://github.com/gitsrc/PromptSentinel/tree/main/sdks/javascript#readme",
+  "bugs": {
+    "url": "https://github.com/gitsrc/PromptSentinel/issues"
+  },
+  "sideEffects": false
+}

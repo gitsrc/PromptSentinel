@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a problem with PromptSentinel
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. docker compose up -d --build
+        2. curl ...
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Guard service (engine / API)
+        - Web console (portal)
+        - SDK (Python / JS / Go / Java)
+        - Benchmark / datasets
+        - Docs
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Please do NOT paste any prompt/response bodies.
+      render: shell

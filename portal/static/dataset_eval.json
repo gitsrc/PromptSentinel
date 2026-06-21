@@ -1,0 +1,22 @@
+{
+  "title": "威胁对齐 + 成本分档评测(本机实测 · 默认后端 PG2)",
+  "measured_at": "2026-06-20",
+  "method": "公开集按防线映射;regex(零成本)/ ml(默认后端 Prompt Guard 2 22M ONNX)/ hybrid(规则+ML 级联)。数字均源自 service/benchmark/{eval_regex,eval_hybrid,pg2_compare,ml_compare}.json,可 make 复现。",
+  "rows": [
+    { "dataset": "Lakera/gandalf", "line": "② 系统提示/密钥套取", "tag": "主线 · 最切题", "n": 1000, "regex": 0.78, "ml": 0.974, "hybrid": 0.981, "fpr": null, "primary": true, "note": "主线 hybrid 98.1%(PG2);deberta 档可达 100%,见成本分档" },
+    { "dataset": "In-the-Wild Jailbreak", "line": "② 真实越狱", "tag": "切题", "n": 300, "regex": 0.697, "ml": 0.893, "hybrid": 0.92, "fpr": null, "note": "PG2 比 deberta 更高(deberta hybrid 88.7%)" },
+    { "dataset": "ai4privacy PII", "line": "④ 输出 PII", "tag": "切题", "n": 200, "regex": 0.415, "ml": null, "hybrid": 0.415, "fpr": 0.0, "note": "凭证/IP/SSN/MAC/IMEI 全覆盖,良性输出 FPR 0;姓名/地址需 NER(use_llm_guard)。ML 不检 ④输出面" },
+    { "dataset": "deepset(参照)", "line": "② 通用注入", "tag": "非主线 · 参照", "n": 116, "regex": 0.233, "ml": 0.133, "hybrid": 0.267, "fpr": 0.0, "note": "非主线;PG2 对通用注入较保守,deberta 档更高(48%)。本列 FPR=regex(0%),叠加 ML en/de 约 +1pp" }
+  ],
+  "tiers": [
+    { "name": "档0 · regex-only(零成本)", "mainline": "78%", "cost": "<0.1ms/条 · 0 内存 · 零依赖", "fit": "成本敏感 / 高并发 / 离线 / 低价值场景" },
+    { "name": "档1 · hybrid(默认 PG2)", "mainline": "98.1%(PG2)/100%(deberta)", "cost": "级联下主线 p50 0.09ms;漏网才付 ~25ms(PG2 p50)或 ~150ms(deberta)", "fit": "高保障 + 多语种;秒级大模型前可接受" }
+  ],
+  "backends": [
+    { "name": "prompt_guard_onnx(默认)", "gandalf": 0.974, "inthewild": 0.893, "latency_ms": 25, "size": "22M", "note": "多语种;中文良性不误报;ONNX 无需 torch" },
+    { "name": "deberta(可选)", "gandalf": 1.0, "inthewild": 0.75, "latency_ms": 150, "size": "184M", "note": "英文最高召回;deepset 更高;中文需 lang_guard" }
+  ],
+  "cost_notes": "ML 后端二选一(本地、数据不出域):默认 prompt_guard_onnx(Llama Prompt Guard 2 22M ONNX,多语种,实测 p50 ~25ms,中文良性不误报)或 deberta(英文最高召回,~150ms)。级联:regex 命中即跳 ML。⚠️ torch 量化对 deberta 掉精度已弃。中文注入两 ML 都弱→靠 regex(中文 100%)。来源:pg2_compare.json / ml_compare.json。",
+  "inhouse": { "n": 39, "recall": 1.0, "fpr": 0.0 },
+  "caveat": "全部为本机 CPU 实测,数字源自 benchmark/*.json 可复现。默认后端 PG2 仅提升 ②输入注入;④输出 PII 需启用 use_llm_guard(NER)。③ canary 是构造性确定控制(逐字泄露≈100%),不在输入集评测范围。受控指标 ≠ 真实对抗上限,须叠加架构层硬边界(最小权限/只读RLS/egress/HITL)。"
+}

@@ -1,0 +1,12 @@
+# PromptSentinel 服务运行时依赖(纯开源,可商用许可)。
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27,<1.0
+pydantic>=1.10,<3.0
+pyyaml>=6.0,<7.0
+httpx>=0.24,<1.0     # 仅 .llmenv 实时工具/可选 LLM-judge 用;无网络也不影响确定性路径
+# 生产复现性:上限挡住 major break;严格复现请 pip-compile 生成带 hash 的 lockfile + --require-hashes。
+
+# 测试用(运行 pytest / smoke_test 需要,生产镜像可不装):
+# pytest>=8.0
+
+# 可选 ML 增强见 requirements-ml.txt(默认不装,镜像更小、可离线)。

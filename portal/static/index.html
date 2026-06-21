@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PromptSentinel · 提示词安全防护平台</title>
+<link rel="stylesheet" href="/static/styles.css?v=3" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230891b2' d='M12 1l9 4v6c0 5-3.8 9.7-9 11-5.2-1.3-9-6-9-11V5l9-4z'/%3E%3C/svg%3E" />
+</head>
+<body>
+
+<!-- ============ 顶栏 ============ -->
+<header class="topbar">
+  <div class="brand">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l9 4v6c0 5-3.8 9.7-9 11-5.2-1.3-9-6-9-11V5l9-4z"/></svg></span>
+    Prompt<b>Sentinel</b>
+  </div>
+  <nav class="nav" id="nav">
+    <a data-view="overview" class="active">概览</a>
+    <a data-view="principle">安全原理</a>
+    <a data-view="demo">实时 Demo</a>
+    <a data-view="playground">接入 Playground</a>
+    <a data-view="benchmark">数据集 Benchmark</a>
+    <a data-view="telemetry">监控遥测</a>
+    <a data-view="guide">接入指南</a>
+  </nav>
+  <div class="top-status" id="topStatus" title="Guard 安检门状态">
+    <span class="dot" id="statusDot"></span><span id="statusText">连接中…</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ==================== 概览 ==================== -->
+  <section class="view active" id="view-overview">
+    <div class="hero">
+      <span class="hero-tag">● 生产级 · 数据不出域 · 四道防线</span>
+      <h1>在大模型前,守住提示词安全的最后一道闸门</h1>
+      <p>面向 Agent/RAG 应用的提示词注入与系统提示词防泄露安检门。确定性规则零成本兜底,叠加业界基准 ML(Prompt Guard 2),在公开数据集上达到行业基准水平——且全程本地推理、数据不出域。</p>
+      <div class="row">
+        <button class="btn primary" data-goto="demo">▶ 体验实时检测</button>
+        <button class="btn" data-goto="playground" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.2)">查看接入方式</button>
+      </div>
+    </div>
+
+    <div class="grid cols-4" id="ov-kpis"></div>
+
+    <div class="section" style="margin-top:40px">
+      <div class="section-head"><div class="section-title">四道防线</div><h2>纵深防御:构建期加固 → 输入检测 → 输出双闸</h2></div>
+      <div class="grid cols-4" id="ov-lines"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">行业基准能力</div><h2>公开数据集上的真实安全能力</h2>
+        <p class="lead">数字均为本机实测、可 <code>make</code> 复现;默认后端 Prompt Guard 2(多语种、轻量)。</p></div>
+      <div id="ov-scorecard"></div>
+    </div>
+  </section>
+
+  <!-- ==================== 安全原理(形象动画) ==================== -->
+  <section class="view" id="view-principle">
+    <div class="section-head"><div class="section-title">安全原理 · 形象演示</div>
+      <h2>一个请求,如何被层层守护?</h2>
+      <p class="lead">用一条"安检流水线"看懂四道防线 —— 切换不同请求,看它在哪一关被拦、为什么。右上角可切【🧒 通俗讲解 / 🛠 技术细节】两种视角。</p>
+    </div>
+    <div id="principle-stage"></div>
+  </section>
+
+  <!-- ==================== 实时 Demo ==================== -->
+  <section class="view" id="view-demo">
+    <div class="section-head"><div class="section-title">实时检测 · 全链路追踪</div><h2>提示词 / 模型输出走过了哪些检测?</h2>
+      <p class="lead">切换【输入注入检测】或【输出防泄漏】,实时检测并弹出全链路监控动画:经过的服务节点、每项检测的命中 / 通过 / 跳过、span 耗时瀑布,以及"追踪 → 指标"闭环。</p></div>
+    <div class="tabs" id="demoTabs" style="margin-bottom:14px">
+      <button class="tab on" data-d="input">② 输入注入检测</button>
+      <button class="tab" data-d="output">③④ 输出防泄漏(canary / 标识符 / 密钥 / PII)</button>
+    </div>
+    <div class="grid cols-2" style="align-items:start">
+      <div class="panel">
+        <div class="panel-head"><span class="card-title" id="demo-panel-title">② 输入注入检测</span><span class="badge accent" id="demo-mode">规则 + ML</span></div>
+        <div class="panel-body">
+          <textarea id="demoInput" placeholder="输入提示词,或模拟一段模型输出"></textarea>
+          <div class="row" id="demoUntrustedRow" style="margin:10px 0">
+            <label class="small muted"><input type="checkbox" id="demoUntrusted" /> 作为不可信外部内容(RAG/工具返回,更严阈值)</label>
+          </div>
+          <div class="row" id="demoSamples" style="margin-bottom:12px"></div>
+          <button class="btn primary" id="demoRun">▶ 检测并追踪</button>
+        </div>
+      </div>
+      <div id="demo-verdict"><div class="card"><p class="muted small">输入文本后点"检测并追踪",这里显示判定与原因。</p></div></div>
+    </div>
+    <div id="demo-trace" style="margin-top:20px"></div>
+  </section>
+
+  <!-- ==================== 接入 Playground ==================== -->
+  <section class="view" id="view-playground">
+    <div class="section-head"><div class="section-title">接入流程 · Playground</div><h2>四语言友好接入,在线即可试调</h2>
+      <p class="lead">选择语言查看接入代码,右侧直接对运行中的安检门试调,所见即所得。业务端零 SDK 依赖也可纯 HTTP 接入。</p></div>
+    <div class="grid cols-2" style="align-items:start">
+      <div class="panel">
+        <div class="panel-head"><span class="card-title">接入代码</span>
+          <div class="tabs" id="pgLangs"></div>
+        </div>
+        <div class="panel-body">
+          <div class="tabs" id="pgEndpoints" style="margin-bottom:12px"></div>
+          <div id="pg-code"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="card-title">在线试调</span><span class="badge muted">→ 运行中的 Guard</span></div>
+        <div class="panel-body">
+          <textarea id="pgPayload" spellcheck="false"></textarea>
+          <button class="btn primary" id="pgSend" style="margin-top:10px">发送请求</button>
+          <div id="pg-response" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="section" style="margin-top:30px">
+      <div class="section-head"><div class="section-title">五步接入</div><h2>从部署到上线</h2></div>
+      <div id="pg-steps"></div>
+    </div>
+
+    <div class="section" style="margin-top:30px">
+      <div class="section-head"><div class="section-title">端到端防泄漏演示</div><h2>输入漏了,输出怎么兜住?</h2>
+        <p class="lead">完整走一遍 ① 种 canary → ② 输入检测 →(模拟模型被诱导泄露)→ ③④ 输出检测,直观看双端如何互补:即使输入端被绕过,输出端仍把泄露兜下来。</p></div>
+      <div class="panel">
+        <div class="panel-head"><span class="card-title">系统提示词防泄漏 · 全链路</span>
+          <div class="row">
+            <select id="e2eStyle" class="btn sm">
+              <option value="verbatim">模型逐字复述(③ canary 拦)</option>
+              <option value="paraphrase">模型改写复述(④ 标识符拦)</option>
+            </select>
+            <button class="btn primary sm" id="e2eRun">▶ 运行演示</button>
+          </div>
+        </div>
+        <div class="panel-body" id="e2e-result"><p class="muted small">点"运行演示",完整跑一遍系统提示词防泄漏链路。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 数据集 Benchmark ==================== -->
+  <section class="view" id="view-benchmark">
+    <div class="section-head"><div class="section-title">真实数据集 Benchmark</div><h2>每次都对运行中的引擎真实评测</h2>
+      <p class="lead">点击即把业界公开数据集逐条发给运行中的安检门、现场计算 recall/FPR/延迟(regex 基线 vs 当前配置)——<b>非预录</b>,改 guard 配置后重跑,数字随之变化。</p>
+      <button class="btn sm" id="dsInfoBtn" style="margin-top:10px">🔍 查看数据集来源、权威性与真实样本</button></div>
+    <div class="panel">
+      <div class="panel-head"><span class="card-title">公开数据集 · 实时评测</span>
+        <div class="row">
+          <select id="dsN" class="btn sm">
+            <option value="100">每集抽样 100 条</option>
+            <option value="60">每集 60 条(更快)</option>
+            <option value="200">每集 200 条(更准/更慢)</option>
+          </select>
+          <button class="btn primary sm" id="dsRun">▶ 运行真实评测</button>
+        </div>
+      </div>
+      <div class="panel-body" id="ds-live"><p class="muted small">gandalf(套取)/ in-the-wild(越狱)/ pii(输出泄漏)/ deepset(通用注入)—— 点上方按钮发起后端任务,前端实时显示进度;结果持久化保存,可在下方历史查询。</p></div>
+    </div>
+    <div class="section" style="margin-top:22px">
+      <div class="section-head"><div class="section-title">历史评测记录</div><p class="lead small">每次评测结果都持久化存储(重启不丢),点击任意一条查看完整结果与解释。</p></div>
+      <div id="ds-history"><p class="muted small">暂无历史 —— 运行一次评测后显示。</p></div>
+    </div>
+    <div class="section" style="margin-top:26px">
+      <div class="section-head"><div class="section-title">方法论 · 成本分档 · 后端对比</div></div>
+      <div id="bench-scorecard"></div>
+    </div>
+    <div class="section" style="margin-top:26px">
+      <div class="section-head"><div class="section-title">内置语料实时回放</div></div>
+      <div class="panel">
+        <div class="panel-head"><span class="card-title">自家 corpus 实时 benchmark</span>
+          <button class="btn primary sm" id="benchRun">▶ 运行</button></div>
+        <div class="panel-body" id="bench-live"><p class="muted small">把内置语料逐条发送给运行中的 Guard,现场算 recall/FPR/延迟。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 监控遥测 ==================== -->
+  <section class="view" id="view-telemetry">
+    <div class="section-head"><div class="section-title">监控遥测</div><h2>生产级可观测:指标 · 趋势 · 事件 · 追踪</h2>
+      <p class="lead">进程内遥测示例(绝不记录 prompt/response 正文,仅判定元数据)。生产应导出至 Prometheus / OpenTelemetry。</p></div>
+    <div class="row spread" style="margin-bottom:16px">
+      <div class="row">
+        <button class="btn sm" id="teleLoad">⚡ 注入合成负载</button>
+        <button class="btn sm ghost" id="teleReset">清空遥测</button>
+      </div>
+      <span class="small muted" id="teleUptime"></span>
+    </div>
+    <div class="grid cols-4" id="tele-kpis"></div>
+    <div class="grid cols-2" style="margin-top:18px;align-items:start">
+      <div class="panel"><div class="panel-head"><span class="card-title">放行/拦截时间线 & 延迟分位</span></div><div class="panel-body" id="tele-charts"></div></div>
+      <div class="panel"><div class="panel-head"><span class="card-title">命中原因 Top</span></div><div class="panel-body" id="tele-reasons"></div></div>
+    </div>
+    <div class="grid cols-2" style="margin-top:18px;align-items:start">
+      <div class="panel"><div class="panel-head"><span class="card-title">近期事件</span></div><div class="panel-body" id="tele-events"></div></div>
+      <div class="panel"><div class="panel-head"><span class="card-title">全链路追踪(追踪→指标闭环)</span></div><div class="panel-body" id="tele-traces"></div></div>
+    </div>
+  </section>
+
+  <!-- ==================== 接入指南(影子模式 / 私有红队 / NER) ==================== -->
+  <section class="view" id="view-guide">
+    <div class="section-head"><div class="section-title">接入指南 · 进阶能力</div>
+      <h2>三个让接入方真正用对的进阶能力</h2>
+      <p class="lead">面向团队 / 接入方:① 影子模式怎么灰度上线、② 私有红队为什么必须导入自有样本、③ NER 何时值得为姓名/地址 PII 付出额外代价。图文并茂,照着做即可落地。</p>
+    </div>
+    <div id="guide-stage"></div>
+  </section>
+
+  <div class="foot">PromptSentinel · 前后端示例工程 · 本地推理 / 数据不出域 · 仅监听 127.0.0.1:18080</div>
+</main>
+
+<div class="toast-host" id="toastHost"></div>
+
+<script src="/static/charts.js?v=3"></script>
+<script src="/static/js/core.js?v=3"></script>
+<script src="/static/js/overview.js?v=3"></script>
+<script src="/static/js/principle.js?v=3"></script>
+<script src="/static/js/demo.js?v=3"></script>
+<script src="/static/js/playground.js?v=3"></script>
+<script src="/static/js/benchmark.js?v=3"></script>
+<script src="/static/js/telemetry.js?v=3"></script>
+<script src="/static/js/concepts.js?v=3"></script>
+<script>PS.boot();</script>
+</body>
+</html>
