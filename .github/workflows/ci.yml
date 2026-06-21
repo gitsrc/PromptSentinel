@@ -33,7 +33,7 @@ jobs:
       run:
         working-directory: service
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v5
         with:
@@ -95,7 +95,7 @@ jobs:
       run:
         working-directory: sdks/python
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -115,7 +115,7 @@ jobs:
       run:
         working-directory: sdks/javascript
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # 该 SDK 零运行时依赖、无 lockfile,故不启用 npm 缓存(无可哈希的依赖清单)。
       - uses: actions/setup-node@v4
         with:
@@ -133,7 +133,7 @@ jobs:
       run:
         working-directory: sdks/go
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
@@ -160,7 +160,7 @@ jobs:
       run:
         working-directory: sdks/java
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -175,7 +175,7 @@ jobs:
     name: Docker · compose build + one-click e2e (verify only, no push)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3

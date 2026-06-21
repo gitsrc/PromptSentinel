@@ -49,7 +49,7 @@ jobs:
           - language: java-kotlin
             build-mode: manual
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Java 需要可构建环境(manual 模式下我们自己编译 SDK 供 CodeQL 抽取)。
       - name: Set up Java (java-kotlin only)
@@ -94,7 +94,7 @@ jobs:
       contents: read
       pull-requests: write   # 仅为在 PR 上留审查摘要评论
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
         with:
@@ -108,7 +108,7 @@ jobs:
     name: Gitleaks · secret scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0   # 全历史扫描:抓被后续提交"删掉"但仍在历史里的密钥
       - name: Run gitleaks
@@ -127,7 +127,7 @@ jobs:
       contents: read
       security-events: write   # 仅为写 Code Scanning 告警(SARIF)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # 1) 表格输出到日志:人读、CRITICAL/HIGH 即失败(给 PR 作者直接反馈)。
       - name: Trivy fs (table, fail on HIGH+)
