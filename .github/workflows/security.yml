@@ -54,7 +54,7 @@ jobs:
       # Java 需要可构建环境(manual 模式下我们自己编译 SDK 供 CodeQL 抽取)。
       - name: Set up Java (java-kotlin only)
         if: matrix.language == 'java-kotlin'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
