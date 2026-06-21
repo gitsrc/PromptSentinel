@@ -112,7 +112,7 @@ jobs:
         with:
           fetch-depth: 0   # 全历史扫描:抓被后续提交"删掉"但仍在历史里的密钥
       - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # 只扫描报告;不上传任何 SARIF/资产,泄露即 job 失败(非零退出)。
