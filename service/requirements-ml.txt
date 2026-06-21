@@ -6,7 +6,7 @@
 -r requirements-pg2.txt
 
 # 可选档:ProtectAI deberta-v3-base(英文最高召回,但更重 ~150ms/~1.8GB) —— backend=deberta
-torch>=2.2
+torch>=2.8.0
 sentencepiece>=0.1.99
 
 # 输出 PII 的 NER(姓名/地址/电话,可选) —— use_llm_guard=true(llm-guard 的 Presidio Sensitive)
