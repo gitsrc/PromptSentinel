@@ -1,0 +1,84 @@
+# ============================================================================
+# PromptSentinel 配置 —— 各团队【唯一要改】的文件。app/ 下代码是安全核心,勿改。
+# 改完本文件后:python -m app.selfcheck 自检;docker compose restart 即生效(挂载)。
+# ============================================================================
+# ⚠️★ 重要(默认档能力边界):本文件是【零成本 regex 档】(use_ml_classifier:false),
+#    只可靠拦截「直译类」注入(明文直白的「忽略以上」「输出系统提示词」等)。
+#    对【多语言 / 语义改写 / 对抗后缀】这类注入,regex 召回有限、会漏。
+#    生产环境强烈建议改用 service/production.config.yaml,或在本文件将
+#    scanners.use_ml_classifier 设为 true 开启 PG2 多语种 ML 分类器。
+#    另:检测层始终是概率性的 —— 越权调用 / 数据外泄须叠加【架构层】
+#    allow-list(工具白名单/最小权限)+ HITL(人工复核高危动作)兜底。
+# ============================================================================
+
+team:
+  name: "wind-ops"            # 改成你团队的名字(如 supply-chain)
+  agent: "风控运维 Agent"      # 你的 Agent 名
+
+# 你团队的受保护标识符(逐字/小写包含匹配)。填你自己的 Action 编号、对象/工具名。
+# 注:勿放通用词(如 "schema")—— 会把「设计数据库 schema」「JSON schema」等正常请求误拦。
+protected_terms:
+  - "A01"
+  - "A02"
+  - "A03"
+  - "A04"
+  - "A05"
+
+# 受保护正则(进阶)。留空则用内置默认(Action ID / JWT / key 等)。
+protected_patterns: []
+
+# 命中拦截时统一返回的拒绝话术。
+refusal_message: >
+  抱歉,本体、工具与系统的内部定义属于受保护信息,无法提供。
+  我可以基于这些能力帮您完成具体的业务操作。
+
+# 阈值(0~1)。untrusted 更严,用于 RAG/工具返回等不可信外部内容(间接注入)。
+thresholds:
+  input: 0.5
+  untrusted: 0.35
+
+# 扫描器开关。确定性项默认开;两个增强项默认关。
+scanners:
+  injection_heuristic: true    # 注入短语启发式(确定性)
+  protected_identifier: true   # 受保护标识符(确定性)
+  canary: true                 # canary 逃逸(确定性)——关掉将无法检测逐字泄露
+  pii_output: true             # 输出 PII/secrets(ML 优先,正则回退)
+  use_llm_guard: false         # 本地 ML 增强(llm-guard);需 pip install llm-guard
+  use_ml_classifier: false     # ★ ML 注入分类器(默认后端 PG2 多语种)——高保障档设 true;默认 false=零成本规则档
+  ml_cascade: true             # 级联:确定性规则已命中则跳过 ML(省成本/降延迟)
+  use_llm_judge: false         # 可选 LLM-judge 运行时扫描器 —— 见下方红线告警
+
+# ML 注入分类器(仅当 use_ml_classifier=true 时生效)。
+# ★ 把 ② 输入检测从"确定性正则基线(主线~78%)"提升到业界基准水平(主线 hybrid 98%、越狱 92%)。
+#    默认后端 PG2:Llama Prompt Guard 2 22M ONNX(多语种、实测 ~25ms、无需 torch);
+#    可选 backend=deberta(ProtectAI,英文最高召回但更重 ~150ms/1.8GB/370MB)。
+#    需:pip install -r requirements-ml.txt;容器高保障档已预装并预下载权重。
+#    ⚠️ 注:两种 ML 对【中文注入】召回都弱(业界缺口),中文仍主要靠确定性规则;lang_guard 仅 deberta 需要。
+ml_classifier:
+  backend: "prompt_guard_onnx"   # ★推荐:Llama Prompt Guard 2 22M ONNX(多语种/快6x/省内存,~17ms)
+                                 #   可选 "deberta"(ProtectAI,英文最高召回但更重 ~150ms/1.8GB)
+  model: "protectai/deberta-v3-base-prompt-injection-v2"   # 仅 backend=deberta 时用
+  threshold: 0.5
+  lang_guard: true             # 中文文本不单独由 ML 触发(英文模型对中文易误报),交回中文规则
+  quantize: false              # ⚠️ 实测 torch 动态量化令 deberta-v3 精度崩塌(recall 1.0→0.01),勿开
+  # 成本(实测,CPU 6 线程):单条 ~150ms、常驻 ~1.8GB、首启下载 ~370MB。
+  # 在大模型(秒级)前,150ms 可接受;成本敏感/高并发场景请用 regex-only 档(不开本项)。
+
+# LLM-judge 配置(仅当 use_llm_judge=true 时生效)。
+# ⚠️ 红线:LLM-judge 会把【待检测文本】发给 base_url 指向的端点。
+#    指向【自托管】模型可接受;指向【外部 SaaS】会破坏「数据不出域」——自检会告警。
+#    base_url/model 留空则回退到 .llmenv(默认是外部 MiniMax,仅建议用于开发/测试)。
+llm_judge:
+  base_url: ""                 # 例:http://localhost:8000/anthropic(自托管)
+  model: ""
+  threshold: 0.6
+
+# 服务级可选鉴权。留空=不校验;填值后所有 /v1 端点需带 Authorization: Bearer <token>。
+server:
+  auth_token: ""
+  # 运行模式 —— 灰度上生产的关键开关:
+  #   enforce(默认):检测到注入即【实际拦截】+ 返回拒绝话术。
+  #   shadow(影子) :照常检测但【不拦截】,只在响应标记 would_block(本会拦);
+  #                  用真实流量观测误拦率而【零业务影响】,监控页有"影子看板"。
+  #   建议上线流程:先 shadow 跑真实流量看本会拦率/误拦 → 确认 FPR 可接受 → 改 enforce。
+  mode: "enforce"

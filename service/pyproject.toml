@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "promptsentinel-service"
+version = "1.0.0"
+description = "PromptSentinel — 自托管、数据不出域的 LLM 提示词安全防护服务(安检门)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "PromptSentinel" }]
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "pydantic>=1.10",
+    "pyyaml>=6.0",
+    "httpx>=0.24",
+]
+
+[project.optional-dependencies]
+ml = ["llm-guard>=0.3.14"]
+test = ["pytest>=8.0"]
+
+[tool.setuptools]
+packages = ["app", "app.llm", "app.scanners", "redteam", "benchmark"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

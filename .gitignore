@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Node
+node_modules/
+
+# Go
+*.test
+
+# Java
+target/
+
+# OS / editor
+.DS_Store
+*.swp
+
+# Secrets — never commit real keys. .llmenv lives at the repo root (one level up) and is excluded there.
+.llmenv
+
+# Coverage / test artifacts (regenerate; never commit — they leak local paths)
+.coverage
+**/.coverage
+htmlcov/
+
+# Runtime data dir (docker named-volume / bind leftovers)
+/data/
+
+# ML model cache (downloaded at build/runtime, not source)
+.hfcache/
+**/.hfcache/
+
+# Benchmark run artifacts (regenerate via `make`)
+service/benchmark/results.json
+service/benchmark/*_compare.json
+service/benchmark/pg2_compare.json

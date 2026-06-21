@@ -1,0 +1,81 @@
+{
+  "mode": "regex",
+  "results": [
+    {
+      "dataset": "deepset",
+      "line": "② 通用注入(参照)",
+      "split": "test",
+      "surface": "input",
+      "n": 116,
+      "recall": 0.2333,
+      "fpr": 0.0,
+      "confusion": {
+        "TP": 14,
+        "FP": 0,
+        "TN": 56,
+        "FN": 46
+      },
+      "latency_ms": {
+        "p50": 0.127,
+        "p95": 0.425
+      }
+    },
+    {
+      "dataset": "gandalf",
+      "line": "② 系统提示/密钥套取(主线)",
+      "split": "all",
+      "surface": "input",
+      "n": 1000,
+      "recall": 0.78,
+      "fpr": null,
+      "confusion": {
+        "TP": 780,
+        "FP": 0,
+        "TN": 0,
+        "FN": 220
+      },
+      "latency_ms": {
+        "p50": 0.056,
+        "p95": 0.136
+      }
+    },
+    {
+      "dataset": "inthewild",
+      "line": "② 真实越狱",
+      "split": "all",
+      "surface": "input",
+      "n": 300,
+      "recall": 0.6967,
+      "fpr": null,
+      "confusion": {
+        "TP": 209,
+        "FP": 0,
+        "TN": 0,
+        "FN": 91
+      },
+      "latency_ms": {
+        "p50": 1.212,
+        "p95": 4.559
+      }
+    },
+    {
+      "dataset": "pii",
+      "line": "④ 输出 PII",
+      "split": "all",
+      "surface": "output",
+      "n": 200,
+      "recall": 0.415,
+      "fpr": null,
+      "confusion": {
+        "TP": 83,
+        "FP": 0,
+        "TN": 0,
+        "FN": 117
+      },
+      "latency_ms": {
+        "p50": 0.119,
+        "p95": 0.237
+      }
+    }
+  ]
+}

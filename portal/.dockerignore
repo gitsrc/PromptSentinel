@@ -1,0 +1,7 @@
+# Keep the build context clean — don't ship caches/docs/runtime data into the image.
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+*.md
+.DS_Store

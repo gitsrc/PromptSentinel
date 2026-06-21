@@ -1,0 +1,55 @@
+# ============================================================================
+# PromptSentinel —— Demo 平台专用 Guard 配置(开启全部能力以供展示)。
+# 真实接入请用 service/sentinel.config.yaml(默认零成本档,ML 关闭)。
+# 本文件经 docker-compose 挂载到 guard 容器,展示"行业基准"安全能力。
+# ============================================================================
+
+team:
+  name: "PromptSentinel"
+  agent: "演示·风控运维 Agent"
+
+# 受保护标识符(demo 语料 corpus.json 基于 wind-ops 场景,沿用 A01–A05)。
+# 注:不放通用词 "schema"——它会把「设计数据库 schema」「JSON schema」等正常请求误拦。
+protected_terms:
+  - "A01"
+  - "A02"
+  - "A03"
+  - "A04"
+  - "A05"
+
+protected_patterns: []
+
+refusal_message: >
+  抱歉,本体、工具与系统的内部定义属于受保护信息,无法提供。
+  我可以基于这些能力帮您完成具体的业务操作。
+
+thresholds:
+  input: 0.5
+  untrusted: 0.35
+
+# Demo:确定性四防线全开 + 业界基准 ML(PG2)开启,展示完整能力。
+scanners:
+  injection_heuristic: true
+  protected_identifier: true
+  canary: true
+  pii_output: true
+  use_llm_guard: false         # 输出 PII 的 NER(可选,需 llm-guard,镜像更大)
+  use_ml_classifier: true      # ★ 开启 ML 注入分类器(展示行业基准能力)
+  ml_cascade: true             # 级联:规则命中即跳 ML(省成本/降延迟)
+  use_llm_judge: false         # 不开 LLM-judge(避免破域)
+
+# ML 后端:Llama Prompt Guard 2 22M ONNX(多语种、~17ms、镜像已预下载权重)。
+ml_classifier:
+  backend: "prompt_guard_onnx"
+  threshold: 0.5
+  lang_guard: true
+  quantize: false
+
+llm_judge:
+  base_url: ""
+  model: ""
+  threshold: 0.6
+
+server:
+  auth_token: ""
+  mode: "enforce"            # enforce(实际拦截)/ shadow(影子:本会拦的改放行 + 标记 would_block,灰度上生产观测真实 FPR)

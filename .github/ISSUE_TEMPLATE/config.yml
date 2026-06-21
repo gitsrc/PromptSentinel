@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Security vulnerability (report privately)
+    url: https://github.com/gitsrc/PromptSentinel/security/advisories/new
+    about: Please report security issues privately via a GitHub Security Advisory — see SECURITY.md. Do NOT open a public issue.
+  - name: 📖 Documentation
+    url: https://github.com/gitsrc/PromptSentinel/tree/main/docs
+    about: Methodology, security boundaries, production checklist, engineering report.

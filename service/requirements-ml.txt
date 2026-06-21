@@ -1,0 +1,13 @@
+# 可选 ML 增强(默认不装)。本地推理、数据不出域;首次下载权重(一次性),镜像变大。
+-r requirements.txt
+
+# ★ 推荐档:Llama Prompt Guard 2 22M(ONNX,多语种,~17ms,~22M) —— backend=prompt_guard_onnx
+#   仅需以下(无需 torch,最省);版本下限统一在 requirements-pg2.txt,镜像构建复用同源:
+-r requirements-pg2.txt
+
+# 可选档:ProtectAI deberta-v3-base(英文最高召回,但更重 ~150ms/~1.8GB) —— backend=deberta
+torch>=2.2
+sentencepiece>=0.1.99
+
+# 输出 PII 的 NER(姓名/地址/电话,可选) —— use_llm_guard=true(llm-guard 的 Presidio Sensitive)
+llm-guard>=0.3.14

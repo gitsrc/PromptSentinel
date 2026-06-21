@@ -1,0 +1,18 @@
+# PromptSentinel 单容器部署。配置文件挂载:改 sentinel.config.yaml 后 restart 即生效。
+services:
+  promptsentinel:
+    build: .
+    image: promptsentinel:1.0.0
+    container_name: promptsentinel
+    ports:
+      - "127.0.0.1:8000:8000"   # 仅绑本机回环(调试用);勿用 0.0.0.0 暴露 Guard。生产走网关,见 docs/PRODUCTION-SECURITY.md
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    volumes:
+      - ./sentinel.config.yaml:/app/sentinel.config.yaml:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if 'ok' in urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=2).read().decode() else 1)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
