@@ -117,7 +117,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # 该 SDK 零运行时依赖、无 lockfile,故不启用 npm 缓存(无可哈希的依赖清单)。
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
       # 无依赖也安全:npm install 解析 0 个包后直接进测试(node --test)。
