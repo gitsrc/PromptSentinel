@@ -131,7 +131,7 @@ jobs:
 
       # 1) 表格输出到日志:人读、CRITICAL/HIGH 即失败(给 PR 作者直接反馈)。
       - name: Trivy fs (table, fail on HIGH+)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -145,7 +145,7 @@ jobs:
       #    此步即便上一步失败也运行,确保告警入库。
       - name: Trivy fs (SARIF for code scanning)
         if: always()
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
