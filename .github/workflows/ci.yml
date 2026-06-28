@@ -178,7 +178,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       # 用 compose build(不硬编码前端目录):前端门户在 portal/,
       # 若将来再调整目录,只要改 docker-compose.yml 的 build context,本步无需改动。
